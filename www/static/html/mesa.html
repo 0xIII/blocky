@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>atopia</title>
+        <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css"/>
+    </head>
+    <body class="ph5 center" style="width: fit-content;">
+        <nav class="flex flex-row justify-between">
+            <h4><a href="/">III</a></h4>
+            <span class="self-center">[<a href="https://hachyderm.io/@III">Mastodon</a>] [<a href="https://github.com/0xIII">Github</a>]</span>
+        </nav>
+        <div class="flex flex-row flex-column-m">
+            <article class="tj pv2" style="width: 60em;">
+                <img class="" src="../img/mesa.png" alt="">
+                <h4>MESA MANUAL</h4>
+                <blockquote>It may well seem as though a lot of thought might've gone into the creation of MESA albeit such impressions would be deceiving. This is more of an artistic piece by an eclectic mind, uniting - in true expressionist fashion - past computing milestones with the general disarray of my own person.</blockquote>
+                <h4>Processor</h4>
+                <h4>Memory</h4>
+                <h4>Stack</h4>
+                <p>The Stack is a linear memory area between the bounds base pointer which denotes the base of the stack and the top pointer, marking the top most memory address assignable; currently MESA has a stack size of <i>0x1000</i> (-1 as the lowest address 0x0000 is not in use at the moment) bytes which are pushed onto the stack individually. Nonetheless some instructions or subroutines may return 2-byte-wide values whose bytes are pushed onto the stack from MSB to LSB (the upper byte is pushed first) as seen below.</p>
+                <pre style="width: fit-content;" class="center">
+0x2000   SP            0x0005   SP
+         ▼                      ▼
+────┬────┬────┬────     ────┬────┬────┬────
+    │0x20│0x00│             │0x00│0x05│
+────┴────┴────┴────     ────┴────┴────┴────
+  STACK DIRECTION        STACK DIRECTION
+──────────────────►     ──────────────────►
+</pre>
+                <p>Byte-sized values will be padded to achieve a constant return value width.</p>
+                <h4>Return Stack</h4>
+                This stack holds the return program counters for all the running subroutines. Upon calling the instruction <b>RET</b> 
+                <h4>Instructionset</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 4fr 3fr;  grid-column-gap: 1em;">
+                    <b>Opcode</b>
+                    <b>Instruction</b>
+                    <b>Description</b>
+                    <b>pcode</b>
+
+                    <b>-</b>
+                    <b>PUSH &lt;val8&gt; </b>
+                    <span>pushes a constant byte onto the stack</span>
+                    <span class="i">SP++; STACK[SP] = val8;</span>
+
+                    <b>-</b>
+                    <b>PUSHSP</b>
+                    <span>pushes the stack pointer onto the stack</span>
+                    <span class="i">_t = SP; SP++;<br>STACK[SP] = _t;</span>
+
+                    <b>-</b>
+                    <b>PUSHBP</b>
+                    <span>pushes the base pointer onto the stack</span>
+                    <span class="i">SP++; STACK[SP] = BP;</span>
+
+                    <b>-</b>
+                    <b>PUSHTP</b>
+                    <span>pushes the top pointer onto the stack</span>
+                    <span class="i">SP++; STACK[SP] = TP;</span>
+
+                    <b>-</b>
+                    <b>PUSHPC</b>
+                    <span>pushes the program counter onto the stack</span>
+                    <span class="i">SP++; STACK[SP] = PC;</span>
+
+                    <b>-</b>
+                    <b>POP</b>
+                    <span>takes the topmost byte off the stack and discards it, zeroing the freed space</span>
+                    <span class="i">STACK[SP] = 0; SP--</span>
+                    
+                    <b>-</b>
+                    <b>SWAP</b>
+                    <span>swaps the topmost bytes on the stack by reversing their order</span>
+                    <span class="i">_t = STACK[SP];<br>STACK[SP] = STACK[SP-1];<br>STACK[SP-1] = _t;</span>
+
+                    <b>-</b>
+                    <b>DUP</b>
+                    <span>duplicates the topmost byte on the stack, placing it atop the stack</span>
+                    <span class="i">SP++; STACK[SP] = STACK[SP-1];</span>
+
+                    <b>-</b>
+                    <b>OVER</b>
+                    <span>duplicates the byte below the topmost byte on the stack, placing it atop the stack</span>
+                    <span class="i">SP++; STACK[SP] = STACK[SP-2];</span>
+
+                    <b>-</b>
+                    <b>ROT</b>
+                    <span>rotates the top 3 bytes from 1,2,3 to 3,1,2</span>
+                    <span class="i">_t = STACK[SP];<br>STACK[SP] = STACK[SP-2];<br>STACK[SP-2] = STACK[SP-1];<br>STACK[SP-1] = _t;</span>
+
+                    <b>-</b>
+                    <b>ADD</b>
+                    <span>add the two bytes atop the stack together; returns the result onto the stack</span>
+                    <span class="i">lhs = POP; rhs = POP;<br>PUSH (lhs+rhs)</span>
+                    
+                    <b>-</b>
+                    <b>SUB</b>
+                    <span>subtract the two bytes atop the stack; returns the result onto the stack</span>
+                    <span class="i">lhs = POP; rhs = POP;<br>PUSH (lhs-rhs)</span>
+
+                    <b>-</b>
+                    <b>MUL</b>
+                    <span>multiply the two bytes atop the stack; returns the result onto the stack</span>
+                    <span class="i">lhs = POP; rhs = POP;<br>PUSH (lhs*rhs)</span>
+
+                    <b>-</b>
+                    <b>DIV</b>
+                    <span>divide the two bytes atop the stack; returns the result onto the stack</span>
+                    <span class="i">lhs = POP; rhs = POP;<br>PUSH (lhs/rhs)</span>
+
+                    <b>-</b>
+                    <b>HLT</b>
+                    <span>halts the execution by setting the MSB of the flags register to 1</span>
+                    <span class="i">FLAGS ^= 0x80</span>
+                </div>
+            </article>
+        </div>
+        <footer class="bt">
+            <span class="pv2 fr"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc">BY-NC-SA</a> - <span class="i blocky">
+                blocky
+            </span></span>
+        </footer>
+    </body>
+    <style>
+        @import url('https://fonts.bunny.net/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400;1,500&display=swap');
+
+        body {
+            font-family: monospace;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem;
+        }
+
+        ol {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            min-width: 30em;
+        }
+
+        ol li {
+            padding: 0.25rem 0;
+            width: fit-content;
+        }
+
+        /*a {
+            text-decoration: none;
+            color: black;
+        }*/
+
+        a {
+            text-underline-offset: 2px;
+            color: blue;
+        }
+
+        /*a:hover {
+            text-underline-offset: 2px;
+            text-decoration: underline;
+        }*/
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        article {
+            line-height: 1.1rem;
+            width: fit-content;
+        }
+
+        .cc {
+            padding-left: 15px;
+            background-image: url("../img/cc.svg");
+            background-size: 14px 14px;
+            background-position: 0 0px;
+            background-repeat: no-repeat;
+        }
+
+        .blocky {
+            padding-left: 15px;
+            background-image: url("../img/blocky.svg");
+            background-size: 14px 14px;
+            background-position: 0 0px;
+            background-repeat: no-repeat;
+        }
+
+        article div {
+            break-inside: avoid;
+        }
+
+        article h4 {
+            border-bottom: 1px solid black;
+        }
+
+        blockquote {
+            padding-left: 1em;
+            font-style: italic;
+            border-left: 3px solid black;
+        }
+    </style>
+</html>

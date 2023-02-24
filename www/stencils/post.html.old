@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>III</title>
+        <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css"/>
+    </head>
+    <body class="ph5">
+        <nav class="flex flex-row justify-between">
+            <h4>III</h4>
+            <span class="self-center"><a href="#">Mastodon</a> - <a href="https://github.com/0xIII">Github</a></span>
+        </nav>
+        <ol class="list pl0 bb">
+            {{index}}
+        </ol>
+        <article class="measure tj pv2">
+            {{content}} 
+        </article>
+        <footer class="bt">
+            <span class="pv2 fr"><a href="#" class="cc">BY-NC-SA</a></span>
+        </footer>
+    </body>
+    <style>
+        body {
+            font-family: monospace;
+            font-size: 0.7rem;
+        }
+
+        ol {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            height: 40vh;
+        }
+
+        ol li {
+            padding: 0.25rem 0;
+            width: fit-content;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        a:hover {
+            text-underline-offset: 2px;
+            text-decoration: underline;
+        }
+
+        article {
+            line-height: 1.1rem;
+        }
+
+        .cc {
+            padding-left: 15px;
+            background-image: url("static/img/cc.svg");
+            background-size: 12px 12px;
+            background-position: 0 0px;
+            background-repeat: no-repeat;
+        }
+
+        @media (max-width: 60em) {
+            ol {
+                height: 100%;
+            }
+        }
+
+        @media (min-width: 60em) {
+            article {
+                column-width: 30em;
+                height: 50vh;
+            }
+        }
+
+        article div {
+            break-inside: avoid;
+        }
+
+        article h4 {
+            margin-top: 0;
+            border-bottom: 1px solid black;
+        }
+    </style>
+</html>
